@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neurion Technovate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background: #0a0a0a;
+            color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Login Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .login-modal.hidden {
+            display: none;
+        }
+
+        .login-box {
+            background: white;
+            padding: 48px;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.3);
+            width: 400px;
+        }
+
+        .login-box h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-align: center;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-box p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 32px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #FFD700;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: none;
+            border-radius: 16px;
+            color: #1a1a1a;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #ff4444;
+            text-align: center;
+            margin-top: 16px;
+            display: none;
+        }
+
+        /* Navigation */
+        nav {
+            padding: 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mode-toggle {
+            padding: 12px 32px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: none;
+            border-radius: 24px;
+            color: #1a1a1a;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        }
+
+        .mode-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 120px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        .dark-mode .hero-content h1 {
+            color: #f0f0f0;
+        }
+
+        .hero-content .highlight {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .dark-mode .hero-content p {
+            color: #b0b0b0;
+        }
+
+        .cta-button {
+            padding: 18px 48px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: none;
+            border-radius: 32px;
+            color: #1a1a1a;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Chip Illustration */
+        .hero-illustration {
+            position: relative;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chip-container {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.15));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.2);
+        }
+
+        .chip {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border-radius: 32px;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .chip::before {
+            content: '';
+            position: absolute;
+            inset: 20px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 24px;
+            opacity: 0.2;
+        }
+
+        .chip-grid {
+            position: absolute;
+            inset: 40px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .chip-dot {
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .chip-line {
+            position: absolute;
+            background: #FFD700;
+            opacity: 0.3;
+        }
+
+        .chip-line.h1 { left: 40px; right: 40px; top: 80px; height: 2px; }
+        .chip-line.h2 { left: 40px; right: 40px; top: 140px; height: 2px; }
+        .chip-line.h3 { left: 40px; right: 40px; top: 200px; height: 2px; }
+        .chip-line.v1 { top: 40px; bottom: 40px; left: 80px; width: 2px; }
+        .chip-line.v2 { top: 40px; bottom: 40px; left: 140px; width: 2px; }
+        .chip-line.v3 { top: 40px; bottom: 40px; left: 200px; width: 2px; }
+
+        /* Credits */
+        .credits {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .dark-mode .credits {
+            color: #888;
+        }
+
+        /* Steps Section */
+        .steps {
+            padding: 100px 0;
+            background: linear-gradient(180deg, #ffffff, #fffef8);
+        }
+
+        .dark-mode .steps {
+            background: linear-gradient(180deg, #0a0a0a, #1a1a0a);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 80px;
+        }
+
+        .dark-mode .section-subtitle {
+            color: #888;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .step-card {
+            background: white;
+            padding: 48px 32px;
+            border-radius: 32px;
+            box-shadow: 0 4px 24px rgba(255, 215, 0, 0.15);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .dark-mode .step-card {
+            background: #1a1a1a;
+            box-shadow: 0 4px 24px rgba(255, 215, 0, 0.25);
+        }
+
+        .step-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.25);
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 800;
+            color: white;
+            margin: 0 auto 24px;
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.3);
+        }
+
+        .step-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .step-card p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .dark-mode .step-card p {
+            color: #999;
+        }
+
+        /* Hospital Animation Section */
+        .hospital-section {
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .hospital-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .hospital-image {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.15));
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.2);
+        }
+
+        .hospital-building {
+            width: 400px;
+            height: 350px;
+            background: white;
+            border-radius: 16px;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .dark-mode .hospital-building {
+            background: #2a2a2a;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hospital-cross {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+        }
+
+        .hospital-cross::before,
+        .hospital-cross::after {
+            content: '';
+            position: absolute;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 8px;
+        }
+
+        .hospital-cross::before {
+            width: 30px;
+            height: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .hospital-cross::after {
+            width: 100px;
+            height: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .hospital-windows {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            padding: 30px;
+        }
+
+        .window {
+            width: 50px;
+            height: 50px;
+            background: #FFD700;
+            border-radius: 8px;
+            opacity: 0.3;
+            animation: windowLight 2s ease-in-out infinite;
+        }
+
+        .window:nth-child(odd) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes windowLight {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Product Buttons */
+        .products-section {
+            padding: 80px 0 120px;
+        }
+
+        .products-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-button {
+            padding: 32px;
+            background: white;
+            border: 3px solid transparent;
+            border-radius: 28px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 24px rgba(255, 215, 0, 0.15);
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            min-width: 250px;
+        }
+
+        .dark-mode .product-button {
+            background: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        .product-button:hover {
+            border-color: #FFD700;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .product-button.full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 968px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .steps-grid,
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h1 {
+                font-size: 48px;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-box">
+            <h2>Neurion Technovate</h2>
+            <p>Access Portal</p>
+            <input type="text" class="login-input" id="username" placeholder="Username">
+            <input type="password" class="login-input" id="password" placeholder="Password">
+            <button class="login-button" onclick="login()">Login</button>
+            <p class="error-message" id="errorMessage">Invalid credentials</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="container">
+        <nav>
+            <div class="logo">Neurion Technovate</div>
+            <button class="mode-toggle" onclick="toggleMode()">MODE</button>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>
+                    Where <span class="highlight">Neuro-Intelligence</span> Commands the Future of Human Safety
+                </h1>
+                <p>
+                    Advanced neural technology meets cutting-edge safety systems. Experience the next generation of human protection powered by intelligent monitoring and real-time response.
+                </p>
+                <button class="cta-button" onclick="scrollToProducts()">Welcome</button>
+            </div>
+            <div class="hero-illustration">
+                <div class="chip-container">
+                    <div class="chip">
+                        <div class="chip-grid">
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                            <div class="chip-dot"></div>
+                        </div>
+                        <div class="chip-line h1"></div>
+                        <div class="chip-line h2"></div>
+                        <div class="chip-line h3"></div>
+                        <div class="chip-line v1"></div>
+                        <div class="chip-line v2"></div>
+                        <div class="chip-line v3"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="credits">Made by Pratipal, Sammarth, Aradhya and Rohit</div>
+    </div>
+
+    <!-- Steps Section -->
+    <section class="steps">
+        <div class="container">
+            <h2 class="section-title">Execution Roadmap</h2>
+            <p class="section-subtitle">Three phases to revolutionize human safety</p>
+            
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Neural Integration</h3>
+                    <p>Deploy advanced sensors and neural interfaces that seamlessly connect with human biosignals for real-time monitoring.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>AI Processing</h3>
+                    <p>Our intelligent algorithms analyze patterns, predict risks, and generate instant safety protocols tailored to each situation.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Active Protection</h3>
+                    <p>Automated response systems activate immediately, ensuring maximum safety through smart intervention and alert networks.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hospital Animation Section -->
+    <section class="hospital-section">
+        <div class="container">
+            <div class="hospital-container">
+                <div class="hospital-image">
+                    <div class="hospital-building">
+                        <div class="hospital-cross"></div>
+                        <div class="hospital-windows">
+                            <div class="window"></div>
+                            <div class="window"></div>
+                            <div class="window"></div>
+                            <div class="window"></div>
+                            <div class="window"></div>
+                            <div class="window"></div>
+                            <div class="window"></div>
+                            <div class="window"></div>
+                            <div class="window"></div>
+                            <div class="window"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Buttons -->
+    <section class="products-section" id="products">
+        <div class="container">
+            <div class="products-grid">
+                <a href="https://neurion-neurosooth.lovable.app/" class="product-button" onclick="openInFrame(event, 'https://neurion-neurosooth.lovable.app/')">NeuroSoothe</a>
+                <a href="https://neurion-brainmetrics.lovable.app/login" class="product-button" onclick="openInFrame(event, 'https://neurion-brainmetrics.lovable.app/login')">BrainMetrix</a>
+                <a href="https://neurion-watertable.lovable.app/" class="product-button" onclick="openInFrame(event, 'https://neurion-watertable.lovable.app/')">WaterTable</a>
+                <a href="https://neurion-neurosense.lovable.app/" class="product-button" onclick="openInFrame(event, 'https://neurion-neurosense.lovable.app/')">NeuroSense</a>
+                <a href="https://neurion-neurix.lovable.app/" class="product-button" onclick="openInFrame(event, 'https://neurion-neurix.lovable.app/')">NeurixBand</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Full Screen Iframe Modal -->
+    <div id="iframeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000;">
+        <button onclick="closeFrame()" style="position: absolute; top: 20px; right: 20px; z-index: 2001; padding: 12px 24px; background: linear-gradient(135deg, #FFD700, #FFA500); border: none; border-radius: 16px; color: #1a1a1a; font-weight: 700; cursor: pointer; box-shadow: 0 4px 16px rgba(255, 215, 0, 0.4);">Close</button>
+        <iframe id="contentFrame" style="width: 100%; height: 100%; border: none;" allow="camera; microphone; geolocation; accelerometer; gyroscope; magnetometer; clipboard-read; clipboard-write"></iframe>
+    </div>
+
+    <script>
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'PRATIPAL JAIN' && password === '1221') {
+                document.getElementById('loginModal').classList.add('hidden');
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        }
+
+        function toggleMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        function scrollToProducts() {
+            document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openInFrame(event, url) {
+            event.preventDefault();
+            document.getElementById('iframeModal').style.display = 'block';
+            document.getElementById('contentFrame').src = url;
+        }
+
+        function closeFrame() {
+            document.getElementById('iframeModal').style.display = 'none';
+            document.getElementById('contentFrame').src = '';
+        }
+
+        // Allow Enter key to login
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+    </script>
+</body>
+</html>
